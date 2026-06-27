@@ -305,28 +305,15 @@ input[type="url"]:focus {
     gap: 16px;
     position: absolute;
     left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 80vw;
+    top: 5%;
+    transform: translate(-50%, 0);
+    width: 92%;
     z-index: 100;
 }
-
-/* .form-panel {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: min(92vw, 520px);
-    max-height: 90vh;
-    overflow: auto;
-    transform: translate(-50%, -50%);
-    z-index: 1100;
-} */
 
 .form-panel.is-open {
     display: flex;
 }
-
 
 #player {
     width: 100%;
