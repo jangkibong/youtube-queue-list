@@ -15,6 +15,10 @@ const state = {
 
 // DOM 요소 참조 모음
 const els = {
+    btnAddList: document.getElementById("addListBtn"),
+    btnCloseForm: document.getElementById("closeFormBtn"),
+    modalOverlay: document.getElementById("modalOverlay"),
+    formPanel: document.getElementsByClassName("form-panel"),
     addForm: document.getElementById("addForm"),
     urlInput: document.getElementById("urlInput"),
     titleInput: document.getElementById("titleInput"),
@@ -341,7 +345,7 @@ function renderQueue() {
                 chip.textContent = tag;
                 tags.appendChild(chip);
             });
-        } 
+        }
         // else {
         //     const chip = document.createElement("span");
         //     chip.textContent = "태그 없음";
@@ -614,7 +618,25 @@ function importData(file) {
 }
 
 // DOM 이벤트 핸들러를 연결하는 초기화 함수
+function openAddForm() {
+    if (els.formPanel[0]) {
+        els.formPanel[0].classList.add("is-open");
+    }
+    els.modalOverlay.classList.add("is-open");
+}
+
+function closeAddForm() {
+    if (els.formPanel[0]) {
+        els.formPanel[0].classList.remove("is-open");
+    }
+    els.modalOverlay.classList.remove("is-open");
+    els.addForm.reset();
+}
+
 function bindEvents() {
+    els.btnAddList.addEventListener("click", openAddForm);
+    els.btnCloseForm.addEventListener("click", closeAddForm);
+
     els.addForm.addEventListener("submit", async (event) => {
         event.preventDefault();
         try {
@@ -628,6 +650,7 @@ function bindEvents() {
             const item = createItem({ url, title, tags: els.tagsInput.value });
             addItem(item);
             els.addForm.reset();
+            closeAddForm();
             if (!state.currentVideoId) playItem(item.id, false);
         } catch (error) {
             alert(error.message);

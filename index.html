@@ -16,7 +16,10 @@
         <div class="app-shell">
                 <div>
                     <p class="eyebrow">2026 IMMANUEL Association CCM List</p>
-                    <h1>YOUTUBE QUEUE List</h1>
+                    <h1>
+                        YOUTUBE QUEUE List
+                        <button type="button" class="ghost-btn" id="addListBtn">+</button>
+                    </h1>
                     <p class="hero-copy hide">
                         유튜브 큐 리스트 페이지입니다. 영상 링크와 제목, 태그를 등록해서 원하는 리스트를 만들어 보세요.
                     </p>
@@ -36,8 +39,8 @@
                 <section class="panel form-panel">
                     <div class="panel-head">
                         <h2>Add List</h2>
+                        <button type="button" class="ghost-btn" id="closeFormBtn">X</button>
                     </div>
-
                     <form id="addForm" class="stack-lg">
                         <div class="field-group">
                             <label for="urlInput">유튜브 링크</label>
@@ -183,7 +186,7 @@
                 </div>
             </form>
         </dialog>
-
+        <div class="modal-overlay" id="modalOverlay"></div>
         <script src="https://www.youtube.com/iframe_api"></script>
         <script src="./seed-data.js"></script>
         <script src="./app.js"></script>
