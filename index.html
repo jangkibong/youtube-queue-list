@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <title>YOUTUBE QUEUE List</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet" />
+        <link rel="stylesheet" href="./styles.css" />
+    </head>
+    <body>
+        <div class="app-shell">
+                <div>
+                    <p class="eyebrow">2026 IMMANUEL Association CCM List</p>
+                    <h1>YOUTUBE QUEUE List</h1>
+                    <p class="hero-copy hide">
+                        유튜브 큐 리스트 페이지입니다. 영상 링크와 제목, 태그를 등록해서 원하는 리스트를 만들어 보세요.
+                    </p>
+                </div>
+                <div class="hero-actions hide">
+                    <button id="exportBtn" class="secondary-btn">데이터 내보내기</button>
+                    <label class="secondary-btn file-label" for="importInput"
+                        >데이터 가져오기</label
+                    >
+                    <input id="importInput" type="file" accept="application/json" hidden />
+                </div>
+            </header>
+
+            <div id="runtimeNotice" class="runtime-notice" hidden></div>
+
+            <main class="layout-grid">
+                <section class="panel form-panel">
+                    <div class="panel-head">
+                        <h2>Add List</h2>
+                    </div>
+
+                    <form id="addForm" class="stack-lg">
+                        <div class="field-group">
+                            <label for="urlInput">유튜브 링크</label>
+                            <input
+                                id="urlInput"
+                                name="url"
+                                type="url"
+                                placeholder="https://www.youtube.com/watch?v=..."
+                                required />
+                        </div>
+
+                        <div class="field-group">
+                            <label for="titleInput">표시 제목</label>
+                            <input
+                                id="titleInput"
+                                name="title"
+                                type="text"
+                                placeholder="예: 집중할 때 듣는 Lo-fi" />
+                        </div>
+
+                        <div class="field-group">
+                            <label for="tagsInput">태그</label>
+                            <input
+                                id="tagsInput"
+                                name="tags"
+                                type="text"
+                                placeholder="예: 공부, 음악, 즐겨찾기" />
+                            <small
+                                >쉼표로 여러 태그를 입력할 수 있습니다. 필터는 단일
+                                선택입니다.</small
+                            >
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="primary-btn">목록에 추가</button>
+                            <button type="reset" class="ghost-btn">초기화</button>
+                        </div>
+                    </form>
+
+                    <div class="note-card">
+                        <h3>사용 방식</h3>
+                        <ul>
+                            <li>태그 버튼으로 필터를 선택합니다.</li>
+                            <li>보이는 목록을 드래그해서 현재 필터용 재생 순서를 저장합니다.</li>
+                            <li>영상 종료 시 다음 영상으로 자동 이동합니다.</li>
+                            <li>
+                                <code>seed-data.js</code>에 링크를 직접 하드코딩해서 기본 목록으로
+                                넣을 수 있습니다.
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section class="panel player-panel">
+                    <div class="panel-head">
+                        <h2>PLAY</h2>
+                        <span id="currentFilterBadge" class="pill accent">전체</span>
+                    </div>
+
+                    <div class="player-card">
+                        <div id="player"></div>
+                        <div class="now-playing">
+                            <p class="muted hide">현재 재생</p>
+                            <h3 id="nowPlayingTitle">재생할 영상을 선택해 주세요</h3>
+                            <p id="nowPlayingMeta" class="muted">태그 없음</p>
+                        </div>
+                        <div class="controls">
+                            <button id="prevBtn" class="icon-btn">이전</button>
+                            <button id="playPauseBtn" class="icon-btn emphasis">재생</button>
+                            <button id="nextBtn" class="icon-btn">다음</button>
+                            <button id="repeatBtn" class="icon-btn toggle">전체 반복 꺼짐</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="panel queue-panel">
+                    <div class="panel-head queue-head">
+                        <div>
+                            <h2>List
+                                <p id="queueCount" class="subtle">
+                                    0개 영상
+                                </p>
+                            </h2>
+                        </div>
+                        <div class="queue-tools hide">
+                            <button id="clearFilterBtn" class="ghost-btn small">전체 보기</button>
+                        </div>
+                    </div>
+
+                    <div class="tag-filter-wrap">
+                        <button class="tag-chip active" data-filter="__ALL__">전체</button>
+                        <div id="tagFilterContainer" class="tag-chip-list"></div>
+                    </div>
+
+                    <div id="emptyState" class="empty-state">
+                        아직 추가된 영상이 없습니다. 첫 링크를 등록해 보세요.
+                    </div>
+
+                    <ul id="queueList" class="queue-list"></ul>
+                </section>
+            </main>
+        </div>
+
+        <template id="queueItemTemplate">
+            <li class="queue-item" draggable="true">
+                <div class="drag-handle" title="드래그해서 순서 변경">⋮⋮</div>
+                <button class="item-main" type="button">
+                    <div class="item-thumb-wrap">
+                        <img class="item-thumb" alt="유튜브 썸네일" loading="lazy" />
+                    </div>
+                    <div class="item-text">
+                        <strong class="item-title"></strong>
+                        <span class="item-url"></span>
+                        <div class="item-tags"></div>
+                    </div>
+                </button>
+                <div class="item-actions">
+                    <button class="mini-btn edit-btn" type="button">Edit</button>
+                    <button class="mini-btn danger delete-btn" type="button">Del</button>
+                </div>
+            </li>
+        </template>
+
+        <dialog id="editDialog" class="edit-dialog">
+            <form id="editForm" method="dialog" class="stack-lg">
+                <div class="panel-head">
+                    <h3>영상 정보 수정</h3>
+                    <button id="closeEditDialogBtn" type="button" class="ghost-btn small">
+                        닫기
+                    </button>
+                </div>
+                <input id="editId" type="hidden" />
+                <div class="field-group">
+                    <label for="editTitle">표시 제목</label>
+                    <input id="editTitle" type="text" required />
+                </div>
+                <div class="field-group">
+                    <label for="editTags">태그</label>
+                    <input id="editTags" type="text" placeholder="예: 공부, 즐겨찾기" />
+                </div>
+                <div class="form-actions">
+                    <button id="saveEditBtn" value="save" class="primary-btn">저장</button>
+                </div>
+            </form>
+        </dialog>
+
+        <script src="https://www.youtube.com/iframe_api"></script>
+        <script src="./seed-data.js"></script>
+        <script src="./app.js"></script>
+    </body>
+</html>
